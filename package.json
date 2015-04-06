@@ -1,0 +1,12 @@
+{
+  "name": "gen",
+  "version": "0.1.0",
+  "description": "Customizable file generator.",
+  "license": "MIT",
+  "dependencies": {
+    "mkdirp": "latest"
+  },
+  "devDependencies": {
+    "source-map-support": "latest"
+  }
+}
