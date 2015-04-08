@@ -99,7 +99,8 @@
                                    (= (type v) js/Function) (recur (rest spec) (assoc ctx k v) prefix)
                                    (map? v) (recur (rest spec)
                                                    (assoc ctx k (<! (parse-context (js->clj v) (str k ">"))))
-                                                   prefix))
+                                                   prefix)
+                                   :else (recur (rest spec) ctx prefix))
                                  ctx)))]
          (go
            (try
