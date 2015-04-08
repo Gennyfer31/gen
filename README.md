@@ -2,13 +2,13 @@
 
 Customizable file generator.
 
+A [genapp](https://github.com/sethyuan/genapp) rewritten using ClojureScript with less npm dependencies.
+
 ## Installation
 
 ```bash
 $ npm install -g gen
 ```
-
-## Quick Start
 
 ## License
 
