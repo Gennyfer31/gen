@@ -16,9 +16,9 @@
   (letfn
     [(remove-base-dir [file] (subs file (inc (count in))))
      (copy-file [file]
-       (.sync mkdirp (.dirname path (.join path out file)))
        (let [from (.join path in file)
              to (.join path out (path-transform file))]
+         (.sync mkdirp (.dirname path to))
          (->> (.readFileSync fs from #js {:encoding "utf8"})
               (content-transform)
               (.writeFileSync fs to))))]
