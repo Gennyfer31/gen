@@ -1,4 +1,4 @@
-# easygen
+# genn
 
 Customizable file generator.
 
@@ -7,7 +7,7 @@ A [genapp](https://github.com/sethyuan/genapp) rewritten using ClojureScript wit
 ## Installation
 
 ```bash
-$ npm install -g easygen
+$ npm install -g genn
 ```
 
 ## License
