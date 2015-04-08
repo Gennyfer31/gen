@@ -78,31 +78,28 @@
                           c))
              parse-context (fn parse-context [spec prefix]
                              (go-loop [spec spec ctx {} prefix prefix]
-                               ; TODO: Construct context recursively.
                                (if-let [[k v] (first spec)]
-                                 (condp = (type v)
-                                   js/String (recur (rest spec)
-                                                    (assoc ctx k (<! (question (str prefix k "? "))))
-                                                    prefix)
-                                   js/Number (let [n (js/parseInt (<! (question (str prefix k "? (number) "))))]
-                                               (if (js/isNaN n)
-                                                 (do
-                                                   (print "It's not number.")
-                                                   (recur spec ctx prefix))
-                                                 (recur (rest spec) (assoc ctx k n) prefix)))
-                                   js/Boolean (let [s (string/lower-case (<! (question (str prefix k "? (yes/no) "))))]
-                                                (cond
-                                                  (or (= s "yes") (= s "y"))
-                                                  (recur (rest spec) (assoc ctx k true) prefix)
-                                                  (or (= s "no") (= s "n"))
-                                                  (recur (rest spec) (assoc ctx k false) prefix)
-                                                  :else (do
-                                                          (print "yes or no please.")
-                                                          (recur spec ctx prefix))))
-                                   js/Function (recur (rest spec) (assoc ctx k v) prefix)
-                                   js/Object (recur (rest spec)
-                                                    (assoc ctx k (<! (parse-context v (str k "> "))))
-                                                    prefix))     
+                                 (cond
+                                   (string? v) (recur (rest spec)
+                                                      (assoc ctx k (<! (question (str prefix k "? "))))
+                                                      prefix)
+                                   (number? v) (let [n (js/parseInt (<! (question (str prefix k "? (number) "))))]
+                                                 (if (js/isNaN n)
+                                                   (do
+                                                     (print "It's not number.")
+                                                     (recur spec ctx prefix))
+                                                   (recur (rest spec) (assoc ctx k n) prefix)))
+                                   (= (type v) js/Boolean) (let [s (string/lower-case (<! (question (str prefix k "? (yes/no) "))))]
+                                                             (cond
+                                                               (or (= s "yes") (= s "y")) (recur (rest spec) (assoc ctx k true) prefix)
+                                                               (or (= s "no") (= s "n")) (recur (rest spec) (assoc ctx k false) prefix)
+                                                               :else (do
+                                                                       (print "yes or no please.")
+                                                                       (recur spec ctx prefix))))
+                                   (= (type v) js/Function) (recur (rest spec) (assoc ctx k v) prefix)
+                                   (map? v) (recur (rest spec)
+                                                   (assoc ctx k (<! (parse-context (js->clj v) (str k "> "))))
+                                                   prefix))
                                  ctx)))]
          (go
            (try
