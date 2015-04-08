@@ -1,5 +1,5 @@
 (ns gen.fs
-  (:require-macros [gen.core :refer [do-or-exit]]))
+  (:require-macros [gen.core :refer [exit-if-error]]))
 
 (def fs (js/require "fs"))
 (def path (js/require "path"))
@@ -13,17 +13,15 @@
       (concat files (mapcat file-seq subdirs)))))
 
 (defn copy-dir [in out transformer]
-  (let [base-dir-offset (inc (count in))]
-    (letfn
-      [(remove-base-dir [file]
-         (subs file base-dir-offset))
-       (copy-file [file]
-         (.sync mkdirp (.dirname path (.join path out file)))
-         (let [from (.join path in file)
-               to (.join path out file)]
-           (->> (.readFileSync fs from)
-                (transformer)
-                (.writeFileSync fs to))))]
-      (do-or-exit
-        (doseq [file (map remove-base-dir (file-seq in))]
-          (copy-file file))))))
+  (letfn
+    [(remove-base-dir [file] (subs file (inc (count in))))
+     (copy-file [file]
+       (.sync mkdirp (.dirname path (.join path out file)))
+       (let [from (.join path in file)
+             to (.join path out file)]
+         (->> (.readFileSync fs from #js {:encoding "utf8"})
+              (transformer)
+              (.writeFileSync fs to))))]
+    (exit-if-error
+      (doseq [file (map remove-base-dir (file-seq in))]
+        (copy-file file)))))

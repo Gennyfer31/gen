@@ -4,7 +4,8 @@
   "description": "Customizable file generator.",
   "license": "MIT",
   "dependencies": {
-    "mkdirp": "latest"
+    "mkdirp": ">=0.5.0",
+    "hogan.js": ">=3.0.2"
   },
   "devDependencies": {
     "source-map-support": "latest"

@@ -1,6 +1,6 @@
 (ns gen.core)
 
-(defmacro do-or-exit [& body]
+(defmacro exit-if-error [& body]
   `(try
      ~@body
      (catch js/Error ~'err
