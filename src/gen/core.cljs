@@ -98,7 +98,7 @@
                                                                        (recur spec ctx prefix))))
                                    (= (type v) js/Function) (recur (rest spec) (assoc ctx k v) prefix)
                                    (map? v) (recur (rest spec)
-                                                   (assoc ctx k (<! (parse-context (js->clj v) (str k "> "))))
+                                                   (assoc ctx k (<! (parse-context (js->clj v) (str k ">"))))
                                                    prefix))
                                  ctx)))]
          (go
@@ -121,8 +121,12 @@
                            (<!)
                            (clj->js)
                            (post-process-context (.-postProcess bundle-context))
-                           (<!))]
-          (copy-dir bundle-dir (or dir ".") (partial mustache-transform context)))))))
+                           (<!))
+              transform (partial mustache-transform context)]
+          (copy-dir bundle-dir
+                    (or dir ".")
+                    transform
+                    transform))))))
 
 (defn -main [& argv]
   (let [{:keys [options arguments summary]}

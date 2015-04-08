@@ -12,15 +12,15 @@
                                           (group-by #(.isDirectory (.statSync fs %))))]
       (concat files (mapcat file-seq subdirs)))))
 
-(defn copy-dir [in out transformer]
+(defn copy-dir [in out content-transform path-transform]
   (letfn
     [(remove-base-dir [file] (subs file (inc (count in))))
      (copy-file [file]
        (.sync mkdirp (.dirname path (.join path out file)))
        (let [from (.join path in file)
-             to (.join path out file)]
+             to (.join path out (path-transform file))]
          (->> (.readFileSync fs from #js {:encoding "utf8"})
-              (transformer)
+              (content-transform)
               (.writeFileSync fs to))))]
     (exit-if-error
       (doseq [file (map remove-base-dir (file-seq in))]
