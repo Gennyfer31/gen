@@ -1,5 +1,3 @@
-/src/
-/target/
-/repl
-/repl.clj
-/project.clj
+test/
+src/
+spec/
